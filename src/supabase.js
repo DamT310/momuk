@@ -61,21 +61,3 @@ export async function createResource({ kind, title, description, url, file }) {
   return data;
 }
 
-export async function deleteRemoteResource(item) {
-  if (!supabase) throw new Error('Supabase가 설정되지 않았습니다.');
-  if (item.storagePath) {
-    const { error: storageError } = await supabase.storage.from(RESOURCE_BUCKET).remove([item.storagePath]);
-    if (storageError) throw storageError;
-  }
-  const { error } = await supabase.from('learning_resources').delete().eq('id', item.id);
-  if (error) throw error;
-}
-
-export async function sendTeacherMagicLink(email) {
-  if (!supabase) throw new Error('Supabase가 설정되지 않았습니다.');
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: window.location.href.split(/[?#]/)[0] }
-  });
-  if (error) throw error;
-}
